@@ -47,6 +47,15 @@ declare namespace CacheHandler {
      * @default undefined (cache all origins)
      */
     origins?: (string | RegExp)[]
+
+    /**
+     * Maximum bytes of a body-significant (QUERY) request body buffered in
+     * memory to compute the body-aware cache key (RFC 10008 Section 2.7).
+     * Streaming bodies up to this size are cached; larger bodies are forwarded
+     * uncached so memory stays bounded.
+     * @default 1024 * 1024
+     */
+    maxRequestBodyKeySize?: number
   }
 
   export interface CacheControlDirectives {
