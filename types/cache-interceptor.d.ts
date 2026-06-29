@@ -3,7 +3,9 @@ import { Readable, Writable } from 'node:stream'
 export default CacheHandler
 
 declare namespace CacheHandler {
-  export type CacheMethods = 'GET' | 'HEAD' | 'OPTIONS' | 'TRACE'
+  // QUERY (RFC 10008) is cacheable; its cache key incorporates a hash of the
+  // request content (Section 2.7) so different query bodies do not collide.
+  export type CacheMethods = 'GET' | 'HEAD' | 'OPTIONS' | 'TRACE' | 'QUERY'
 
   export interface CacheHandlerOptions {
     store: CacheStore
@@ -45,6 +47,15 @@ declare namespace CacheHandler {
      * @default undefined (cache all origins)
      */
     origins?: (string | RegExp)[]
+
+    /**
+     * Maximum bytes of a body-significant (QUERY) request body buffered in
+     * memory to compute the body-aware cache key (RFC 10008 Section 2.7).
+     * Streaming bodies up to this size are cached; larger bodies are forwarded
+     * uncached so memory stays bounded.
+     * @default 1024 * 1024
+     */
+    maxRequestBodyKeySize?: number
   }
 
   export interface CacheControlDirectives {
@@ -71,6 +82,12 @@ declare namespace CacheHandler {
     method: string
     path: string
     headers?: Record<string, string | string[]>
+    /**
+     * Hash of the request content, set for body-significant methods (QUERY)
+     * so the cache key incorporates the request body per RFC 10008 Section 2.7.
+     * Undefined for body-blind methods (GET/HEAD/OPTIONS/TRACE).
+     */
+    requestBodyHash?: string
   }
 
   export interface CacheValue {

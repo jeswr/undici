@@ -67,6 +67,14 @@ declare namespace Interceptors {
      * @default 5 * 1024 * 1024
      */
     maxBufferSize?: number
+    /**
+     * Maximum bytes of a body-significant (QUERY) request body buffered in
+     * memory to compute the body-aware deduplication key. Streaming bodies up
+     * to this size are eligible for deduplication; larger bodies are dispatched
+     * independently so memory stays bounded.
+     * @default 1024 * 1024
+     */
+    maxRequestBodyKeySize?: number
   }
 
   export function dump (opts?: DumpInterceptorOpts): Dispatcher.DispatcherComposeInterceptor
