@@ -7,6 +7,9 @@ import { Blob } from 'node:buffer'
 
 expectAssignable<Dispatcher>(new Dispatcher())
 
+// HTTP QUERY method (RFC 10008) is a first-class HttpMethod
+expectAssignable<Dispatcher.HttpMethod>('QUERY')
+
 {
   const dispatcher = new Dispatcher()
 
