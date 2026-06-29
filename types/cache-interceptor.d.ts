@@ -3,6 +3,10 @@ import { Readable, Writable } from 'node:stream'
 export default CacheHandler
 
 declare namespace CacheHandler {
+  // NOTE: QUERY is deliberately excluded. Although QUERY is safe (RFC 10008),
+  // its response is determined by the request content (RFC 10008 Section 2.7
+  // requires the cache key to incorporate it), and undici's cache key is
+  // body-blind. QUERY must not be added here until the cache key is body-aware.
   export type CacheMethods = 'GET' | 'HEAD' | 'OPTIONS' | 'TRACE'
 
   export interface CacheHandlerOptions {
