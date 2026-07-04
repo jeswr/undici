@@ -169,6 +169,22 @@ declare namespace Errors {
     code: 'UND_ERR_MAX_ORIGINS_REACHED'
   }
 
+  /** An address was refused by the dns interceptor's `validateAddress` hook. */
+  export class AddressBlockedError extends UndiciError {
+    constructor (
+      message?: string,
+      detail?: { address?: string, family?: 4 | 6, hostname?: string }
+    )
+    name: 'AddressBlockedError'
+    code: 'UND_ERR_ADDRESS_BLOCKED'
+    /** The refused IP address. */
+    address?: string
+    /** The IP family of the refused address. */
+    family?: 4 | 6
+    /** The origin hostname the address belongs to (for an IP-literal origin, the address itself). */
+    hostname?: string
+  }
+
   /** SOCKS5 proxy related error. */
   export class Socks5ProxyError extends UndiciError {
     constructor (

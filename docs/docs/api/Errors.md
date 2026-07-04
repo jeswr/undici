@@ -487,6 +487,31 @@ The maximum number of allowed origins has been reached.
 * `name` {string} Always `'MaxOriginsReachedError'`.
 * `code` {string} Always `'UND_ERR_MAX_ORIGINS_REACHED'`.
 
+## Class: `AddressBlockedError`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+* Extends: {UndiciError}
+
+An address (a resolved DNS record, or the address of an IP-literal origin) was
+refused by the [`dns` interceptor](./Interceptors.md#interceptorsdnsopts)'s
+`validateAddress` hook. The request was not dispatched and no connection was
+made to the refused address.
+
+* `name` {string} Always `'AddressBlockedError'`.
+* `code` {string} Always `'UND_ERR_ADDRESS_BLOCKED'`.
+* `address` {string} The refused IP address. (optional)
+* `family` {number} The IP family (`4` or `6`) of the refused address. (optional)
+* `hostname` {string} The origin hostname the address belongs to (for an
+  IP-literal origin, the address itself). (optional)
+
+### `new AddressBlockedError([message[, detail]])`
+
+* `message` {string} The error message. (optional)
+* `detail` {Object} `{ address, family, hostname }`. (optional)
+
 ## Class: `Socks5ProxyError`
 
 <!-- YAML
