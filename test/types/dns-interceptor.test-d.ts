@@ -28,6 +28,10 @@ const pick: Interceptors.DNSInterceptorOpts['pick'] = (origin: URL, records: Int
   throw new Error('stub')
 }
 
+const validateAddress: Interceptors.DNSInterceptorOpts['validateAddress'] = (address: string, family: 4 | 6, origin: URL): boolean => {
+  throw new Error('stub')
+}
+
 expectAssignable<Interceptors.DNSInterceptorOpts>({})
 expectAssignable<Interceptors.DNSInterceptorOpts>({ storage })
 expectAssignable<Interceptors.DNSInterceptorOpts>({ maxTTL: 1000 })
@@ -36,6 +40,8 @@ expectAssignable<Interceptors.DNSInterceptorOpts>({ dualStack: true })
 expectAssignable<Interceptors.DNSInterceptorOpts>({ affinity: 4 })
 expectAssignable<Interceptors.DNSInterceptorOpts>({ lookup })
 expectAssignable<Interceptors.DNSInterceptorOpts>({ pick })
+expectAssignable<Interceptors.DNSInterceptorOpts>({ validateAddress })
+expectAssignable<Interceptors.DNSInterceptorOpts>({ validateAddress: (address: string) => address !== '127.0.0.1' })
 
 expectAssignable<Interceptors.DNSInterceptorRecord>({ address: '127.0.0.1', ttl: 300, family: 4 })
 
@@ -51,6 +57,10 @@ expectNotAssignable<Interceptors.DNSInterceptorOpts>({
   pick: (origin: string) => {
     throw new Error('stub')
   }
+})
+expectNotAssignable<Interceptors.DNSInterceptorOpts>({ validateAddress: 'nope' })
+expectNotAssignable<Interceptors.DNSInterceptorOpts>({
+  validateAddress: (address: string) => 'not a boolean'
 })
 
 expectNotAssignable<Interceptors.DNSInterceptorRecord>({})

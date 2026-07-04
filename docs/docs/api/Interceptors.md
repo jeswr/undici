@@ -229,6 +229,17 @@ dual-stack (IPv4 + IPv6) and custom lookup/storage implementations.
     `(origin, options, callback) => void`.
   * `pick` {Function} (optional) Custom record-selection function called with
     `(origin, records, affinity)` to choose which resolved address to use.
+  * `validateAddress` {Function} (optional) Address-validation hook called with
+    `(address, family, origin)` for **every** resolved DNS record and for the
+    address of an IP-literal origin (which otherwise bypasses resolution).
+    Return `false` to refuse the address: the dispatch fails with an
+    [`AddressBlockedError`](./Errors.md#class-addressblockederror) and nothing
+    is cached or dialed. A thrown error is propagated to the caller instead of
+    the default error. One refused record refuses the whole resolved set — a
+    partially-refused set is treated as hostile (DNS-rebinding signal) rather
+    than filtered. Cached records are validated when they are inserted; while
+    the record storage is `full()`, origins are still resolved and validated
+    (per dispatch, uncached) instead of being dispatched unresolved.
   * `storage` {DNSStorage} (optional) Custom storage backend. Must implement
     `get`, `set`, `delete`, `full`, and `size`.
 
@@ -258,6 +269,28 @@ const agent = new Agent().compose(
     affinity: 4     // prefer IPv4
   })
 )
+```
+
+Because the interceptor dials the address it just resolved (rather than letting
+the connector re-resolve the hostname), `validateAddress` can be used as an
+SSRF / DNS-rebinding guard: the validated address is the address that is
+connected to, TLS SNI and certificate validation stay against the original
+hostname, and composing with the `redirect` interceptor re-resolves and
+re-validates every redirect hop.
+
+```js
+import { isIP } from 'node:net'
+import { Agent, interceptors } from 'undici'
+import ipaddr from 'ipaddr.js' // any IP-classification policy works here
+
+const agent = new Agent().compose([
+  interceptors.dns({
+    // Refuse loopback / private / link-local (cloud metadata) / ULA / mapped targets,
+    // whether they come from a DNS record or an IP-literal URL.
+    validateAddress: (address) => ipaddr.parse(address).range() === 'unicast'
+  }),
+  interceptors.redirect({ maxRedirections: 3 })
+])
 ```
 
 ---

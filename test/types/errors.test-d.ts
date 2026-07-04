@@ -120,6 +120,15 @@ expectAssignable<errors.MaxOriginsReachedError>(new errors.MaxOriginsReachedErro
 expectAssignable<'MaxOriginsReachedError'>(new errors.MaxOriginsReachedError().name)
 expectAssignable<'UND_ERR_MAX_ORIGINS_REACHED'>(new errors.MaxOriginsReachedError().code)
 
+expectAssignable<errors.UndiciError>(new errors.AddressBlockedError())
+expectAssignable<errors.AddressBlockedError>(new errors.AddressBlockedError())
+expectAssignable<errors.AddressBlockedError>(new errors.AddressBlockedError('blocked', { address: '127.0.0.1', family: 4, hostname: 'internal.example' }))
+expectAssignable<'AddressBlockedError'>(new errors.AddressBlockedError().name)
+expectAssignable<'UND_ERR_ADDRESS_BLOCKED'>(new errors.AddressBlockedError().code)
+expectAssignable<string | undefined>(new errors.AddressBlockedError().address)
+expectAssignable<4 | 6 | undefined>(new errors.AddressBlockedError().family)
+expectAssignable<string | undefined>(new errors.AddressBlockedError().hostname)
+
 {
   // @ts-ignore
   function f (): errors.HeadersTimeoutError | errors.ConnectTimeoutError { }

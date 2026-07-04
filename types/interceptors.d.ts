@@ -32,6 +32,14 @@ declare namespace Interceptors {
     maxItems?: number
     lookup?: (origin: URL, options: LookupOptions, callback: (err: NodeJS.ErrnoException | null, addresses: DNSInterceptorRecord[]) => void) => void
     pick?: (origin: URL, records: DNSInterceptorOriginRecords, affinity: 4 | 6) => DNSInterceptorRecord
+    /**
+     * Validate every address (each resolved DNS record, and the address of an IP-literal
+     * origin) before it is dialed. Return `false` to refuse the address — the dispatch
+     * fails with an `AddressBlockedError` and nothing is cached or connected. A thrown
+     * error is propagated to the caller instead. One refused record fails the whole
+     * resolved set (a partially-refused record set is a DNS-rebinding signal).
+     */
+    validateAddress?: (address: string, family: 4 | 6, origin: URL) => boolean
     dualStack?: boolean
     affinity?: 4 | 6
     storage?: DNSStorage
